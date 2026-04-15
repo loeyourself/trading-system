@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+
+// Mock 数据用于测试
+const mockTrades = [
+  { id: '1', stock_code: 'sh600110', stock_name: '诺德股份', type: 'buy', price: 9.80, quantity: 10000, date: '2026-04-01', reason: '放量突破', pnl: null, created_at: new Date().toISOString() },
+  { id: '2', stock_code: 'sh600110', stock_name: '诺德股份', type: 'sell', price: 10.50, quantity: 5000, date: '2026-04-08', reason: '盈利减仓', pnl: 3500, created_at: new Date().toISOString() },
+  { id: '3', stock_code: 'sh600183', stock_name: '生益科技', type: 'buy', price: 65.00, quantity: 5000, date: '2026-04-05', reason: '缩量回踩', pnl: null, created_at: new Date().toISOString() },
+  { id: '4', stock_code: 'sz300857', stock_name: '协创数据', type: 'buy', price: 260.00, quantity: 2000, date: '2026-04-10', reason: '算力概念', pnl: null, created_at: new Date().toISOString() },
+];
+
+const mockTradesData = [...mockTrades];
 
 export async function GET() {
-  try {
-    const { data, error } = await supabase
-      .from('trades')
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (error) throw error;
-    return NextResponse.json({ trades: data });
-  } catch (error) {
-    console.error('获取交易记录失败:', error);
-    return NextResponse.json({ error: '获取数据失败' }, { status: 500 });
-  }
+  return NextResponse.json({ trades: mockTradesData });
 }
 
 export async function POST(request: NextRequest) {
@@ -21,32 +19,31 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { stockCode, stockName, type, price, quantity, date, reason } = body;
 
-    // 计算盈亏（如果是卖出）
     let pnl = null;
     if (type === 'sell') {
-      // 获取该股票的买入平均价
-      const { data: buyTrades } = await supabase
-        .from('trades')
-        .select('price, quantity')
-        .eq('stock_code', stockCode)
-        .eq('type', 'buy');
-
-      if (buyTrades && buyTrades.length > 0) {
-        const totalCost = buyTrades.reduce((sum, t) => sum + t.price * t.quantity, 0);
-        const totalQty = buyTrades.reduce((sum, t) => sum + t.quantity, 0);
-        const avgPrice = totalCost / totalQty;
-        pnl = (price - avgPrice) * quantity;
+      // 简单计算盈亏
+      const buyTrades = mockTradesData.filter(t => t.stock_code === stockCode && t.type === 'buy');
+      if (buyTrades.length > 0) {
+        const avgBuyPrice = buyTrades.reduce((sum, t) => sum + t.price, 0) / buyTrades.length;
+        pnl = (price - avgBuyPrice) * quantity;
       }
     }
 
-    const { data, error } = await supabase
-      .from('trades')
-      .insert({ stock_code: stockCode, stock_name: stockName, type, price, quantity, date, reason, pnl })
-      .select()
-      .single();
+    const newTrade = {
+      id: Date.now().toString(),
+      stock_code: stockCode,
+      stock_name: stockName,
+      type,
+      price: parseFloat(price),
+      quantity: parseInt(quantity),
+      date,
+      reason: reason || null,
+      pnl,
+      created_at: new Date().toISOString(),
+    };
 
-    if (error) throw error;
-    return NextResponse.json({ trade: data });
+    mockTradesData.unshift(newTrade);
+    return NextResponse.json({ trade: newTrade });
   } catch (error) {
     console.error('添加交易记录失败:', error);
     return NextResponse.json({ error: '添加失败' }, { status: 500 });
@@ -56,12 +53,10 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { id } = await request.json();
-    const { error } = await supabase
-      .from('trades')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
+    const index = mockTradesData.findIndex(t => t.id === id);
+    if (index > -1) {
+      mockTradesData.splice(index, 1);
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('删除交易记录失败:', error);

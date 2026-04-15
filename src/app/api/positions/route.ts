@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+
+// Mock 持仓数据
+const mockPositions = [
+  { id: '1', stock_code: 'sh600110', stock_name: '诺德股份', quantity: 5000, avg_price: 9.80, current_price: 10.35, pnl: 2750, updated_at: new Date().toISOString() },
+  { id: '2', stock_code: 'sz300857', stock_name: '协创数据', quantity: 2000, avg_price: 260.00, current_price: 280.00, pnl: 40000, updated_at: new Date().toISOString() },
+];
+
+const mockPositionsData = [...mockPositions];
 
 export async function GET() {
-  try {
-    const { data, error } = await supabase
-      .from('positions')
-      .select('*')
-      .order('updated_at', { ascending: false });
-
-    if (error) throw error;
-    return NextResponse.json({ positions: data });
-  } catch (error) {
-    console.error('获取持仓失败:', error);
-    return NextResponse.json({ error: '获取数据失败' }, { status: 500 });
-  }
+  return NextResponse.json({ positions: mockPositionsData });
 }
 
 export async function POST(request: NextRequest) {
@@ -23,14 +19,19 @@ export async function POST(request: NextRequest) {
 
     const pnl = currentPrice ? (currentPrice - avgPrice) * quantity : 0;
 
-    const { data, error } = await supabase
-      .from('positions')
-      .insert({ stock_code: stockCode, stock_name: stockName, quantity, avg_price: avgPrice, current_price: currentPrice, pnl })
-      .select()
-      .single();
+    const newPosition = {
+      id: Date.now().toString(),
+      stock_code: stockCode,
+      stock_name: stockName,
+      quantity,
+      avg_price: avgPrice,
+      current_price: currentPrice,
+      pnl,
+      updated_at: new Date().toISOString(),
+    };
 
-    if (error) throw error;
-    return NextResponse.json({ position: data });
+    mockPositionsData.push(newPosition);
+    return NextResponse.json({ position: newPosition });
   } catch (error) {
     console.error('添加持仓失败:', error);
     return NextResponse.json({ error: '添加失败' }, { status: 500 });
@@ -42,17 +43,17 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, quantity, avgPrice, currentPrice } = body;
 
-    const pnl = currentPrice && avgPrice ? (currentPrice - avgPrice) * quantity : 0;
-
-    const { data, error } = await supabase
-      .from('positions')
-      .update({ quantity, avg_price: avgPrice, current_price: currentPrice, pnl, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json({ position: data });
+    const position = mockPositionsData.find(p => p.id === id);
+    if (position) {
+      if (quantity !== undefined) position.quantity = quantity;
+      if (avgPrice !== undefined) position.avg_price = avgPrice;
+      if (currentPrice !== undefined) {
+        position.current_price = currentPrice;
+        position.pnl = (currentPrice - position.avg_price) * position.quantity;
+      }
+      position.updated_at = new Date().toISOString();
+    }
+    return NextResponse.json({ position });
   } catch (error) {
     console.error('更新持仓失败:', error);
     return NextResponse.json({ error: '更新失败' }, { status: 500 });
@@ -62,12 +63,10 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { id } = await request.json();
-    const { error } = await supabase
-      .from('positions')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
+    const index = mockPositionsData.findIndex(p => p.id === id);
+    if (index > -1) {
+      mockPositionsData.splice(index, 1);
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('删除持仓失败:', error);
