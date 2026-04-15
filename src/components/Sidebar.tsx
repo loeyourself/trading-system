@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { LayoutDashboard, ListOrdered, BookOpen, Brain, TrendingUp } from 'lucide-react';
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/', label: '📊 仪表盘', icon: LayoutDashboard },
   { href: '/stocks', label: '股票池', icon: ListOrdered },
   { href: '/trades', label: '交易日志', icon: BookOpen },
   { href: '/strategies', label: '策略管理', icon: Brain },
