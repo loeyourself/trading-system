@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ListOrdered, BookOpen, Brain, TrendingUp } from 'lucide-react';
+import { Target, ListOrdered, BookOpen, Brain, TrendingUp } from 'lucide-react';
 
 const navItems = [
-  { href: '/', label: '📊 仪表盘', icon: LayoutDashboard },
-  { href: '/stocks', label: '股票池', icon: ListOrdered },
-  { href: '/trades', label: '交易日志', icon: BookOpen },
-  { href: '/strategies', label: '策略管理', icon: Brain },
-  { href: '/analytics', label: '数据分析', icon: TrendingUp },
+  { href: '/', label: '🎯 交易系统', icon: Target },
+  { href: '/stocks', label: '📈 股票池', icon: ListOrdered },
+  { href: '/trades', label: '📝 交易日志', icon: BookOpen },
+  { href: '/strategies', label: '🧠 策略管理', icon: Brain },
+  { href: '/analytics', label: '📊 数据分析', icon: TrendingUp },
 ];
 
 export default function Sidebar() {
@@ -19,7 +19,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-slate-900 text-white min-h-screen p-4">
       <div className="mb-8">
         <h1 className="text-xl font-bold text-emerald-400">🎯 猎手交易系统</h1>
-        <p className="text-sm text-slate-400 mt-1">Trading System v2.0</p>
+        <p className="text-sm text-slate-400 mt-1">波段交易 v2.0</p>
       </div>
 
       <nav className="space-y-2">
@@ -45,8 +45,8 @@ export default function Sidebar() {
 
       <div className="mt-8 pt-8 border-t border-slate-700">
         <div className="text-xs text-slate-500">
-          <p>波段交易系统 v2.0</p>
-          <p className="mt-1">纯K线 + 成交量</p>
+          <p>纯K线 + 成交量</p>
+          <p className="mt-1">不追涨 · 不扛单 · 严格止损</p>
         </div>
       </div>
     </aside>
