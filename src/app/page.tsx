@@ -166,7 +166,7 @@ export default function TradingSystem() {
             </div>
             <div className="text-center p-4 bg-emerald-50 rounded-lg">
               <TrendingUp className="mx-auto text-emerald-500 mb-2" size={32} />
-              <div className="text-2xl font-bold text-emerald-600">>15%减仓</div>
+              <div className="text-2xl font-bold text-emerald-600">&gt;15%减仓</div>
               <div className="text-sm text-slate-500">大阴线减仓50%</div>
             </div>
           </div>
