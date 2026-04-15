@@ -97,7 +97,7 @@ export default function StrategiesPage() {
               <ul className="list-disc list-inside mt-2 space-y-1">
                 <li>买入：缩量回踩撑住 或 放量突破关键点</li>
                 <li>卖出：-7%无条件止损 / 盈利&gt;15%大阴线减仓50%</li>
-                <li>仓位：单只≤30%，同时持仓≤3只</li>
+                <li>仓位：单只&lt;=30%，同时持仓&lt;=3只</li>
                 <li>禁忌：不扛单、不追涨、不重仓</li>
               </ul>
             </div>
