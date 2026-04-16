@@ -8,6 +8,7 @@ const navItems = [
   { href: '/', label: '🎯 交易系统', icon: Target },
   { href: '/stocks', label: '📈 股票池', icon: ListOrdered },
   { href: '/trades', label: '📝 交易日志', icon: BookOpen },
+  { href: '/learn', label: '📚 每日学习', icon: BookOpen },
   { href: '/strategies', label: '🧠 策略管理', icon: Brain },
   { href: '/analytics', label: '📊 数据分析', icon: TrendingUp },
 ];
