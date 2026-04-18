@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Target, ListOrdered, BookOpen, Brain, TrendingUp, Sparkles } from 'lucide-react';
+import { Target, ListOrdered, BookOpen, Brain, TrendingUp } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: '🎯 交易系统', icon: Target },
@@ -10,7 +10,6 @@ const navItems = [
   { href: '/trades', label: '📝 交易日志', icon: BookOpen },
   { href: '/learn', label: '📚 每日学习', icon: BookOpen },
   { href: '/strategies', label: '🧠 策略管理', icon: Brain },
-  { href: '/research', label: '✨ AI 投研', icon: Sparkles },
   { href: '/analytics', label: '📊 数据分析', icon: TrendingUp },
 ];
 
